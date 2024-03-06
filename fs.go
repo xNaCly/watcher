@@ -20,11 +20,18 @@ type File struct {
 func walkDir(root string, extensions []string) []File {
 	r := make([]File, 0, 32)
 	filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
-		if info.IsDir() || path == root || path[0] == '.' {
+		if path == "" || info.IsDir() || path == root || path[0] == '.' {
 			return nil
 		}
-		if len(extensions) > 0 && !slices.Contains(extensions, filepath.Ext(path)[1:]) {
-			return nil
+		if len(extensions) > 0 {
+			ext := filepath.Ext(path)
+			if ext == "" {
+				return nil
+			}
+			if !slices.Contains(extensions, ext[1:]) {
+				return nil
+
+			}
 		}
 		r = append(r, File{path, info.ModTime()})
 		return nil
