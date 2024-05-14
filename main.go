@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -36,6 +37,7 @@ func main() {
 		defer wg.Done()
 		for {
 			file := <-hasChange
+			fmt.Print("\033c")
 			slog.Info("Change detected, triggering command", "file", file)
 			err := execute(*command)
 			if err != nil {
